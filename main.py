@@ -50,10 +50,10 @@ def parse_bench_file(file_path):
 
 
 # Specify the file path for c17
-c17_file_path = "BENCH files\c17.bench.txt"
+file_path = "bench-files\c17.bench.txt"
 
 # Parse the bench file and print the parsed information
-parsed_c17 = parse_bench_file(c17_file_path)
+parsed_file = parse_bench_file(file_path)
 
-print("Parsed c17 information:")
-print(parsed_c17)
+print("Parsed information:")
+print(parsed_file)
