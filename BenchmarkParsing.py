@@ -8,7 +8,10 @@ def parse_bench_file(file_path):
     inputs = []  # List to store input numbers
     outputs = []  # List to store output numbers
     inverters_count = 0  # Initialize inverter count
-    gates = {}  # Dictionary to store gate expressions
+    gates = {}  # Dictionary to store gate expressions and types
+
+    # Define a dictionary to map gate numbers to gate types
+    gate_types = {}
 
     # Iterate through each line in the file
     for line in file_content.split('\n'):
@@ -31,29 +34,33 @@ def parse_bench_file(file_path):
                 # Extract the inverter count from the metadata
                 inverters_count = int(parts[2])
 
-        # Check if the line contains a gate assignment
+       # Check if the line contains a gate assignment
         elif line and '=' in line:
             parts = line.split('=')
-            # Extract the gate number and gate expression
-            gate_number = int(parts[0].strip())
-            gate_expression = parts[1].strip().replace(' ', '').split('(')[1].split(')')[0]
-            # Store the gate expression in the gates dictionary
-            gates[gate_number] = gate_expression
+            # Extract the gate number, gate expression, and gate type
+            gate_number = int(parts[0].strip())  # Convert gate_number to an integer
+            gate_info = parts[1].strip().split('(')
+            gate_type = gate_info[0]
+            gate_expression = gate_info[1].split(')')[0].split(',')  # Convert to a list of integers
+            gate_expression = [int(x) for x in gate_expression]  # Convert each element to an integer
+            # Store the gate expression and type in the gates dictionary
+            gates[gate_number] = gate_expression  # Store as a list of integers
+            gate_types[gate_number] = gate_type
 
     # Return a dictionary containing the parsed information
     return {
         "inputs": inputs,
         "outputs": outputs,
         "inverters": inverters_count,
-        "gates": gates
+        "gates": gates,
+        "gate_types": gate_types  # Include gate types in the result
     }
 
+# # Specify the file path for c17
+# file_path = "bench-files\c17.bench.txt"
 
-# Specify the file path for c17
-file_path = "bench-files\c17.bench.txt"
+# # Parse the bench file and print the parsed information
+# parsed_file = parse_bench_file(file_path)
 
-# Parse the bench file and print the parsed information
-parsed_file = parse_bench_file(file_path)
-
-print("Parsed information:")
-print(parsed_file)
+# print("Parsed information:")
+# print(parsed_file)
