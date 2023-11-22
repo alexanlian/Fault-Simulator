@@ -1,3 +1,7 @@
+from BenchmarkParsing import *
+from classes.Wire import *
+from classes.Gate import *
+
 class Circuit:
     def __init__(self, file_path):
         self.parsed_file = parse_bench_file(file_path)

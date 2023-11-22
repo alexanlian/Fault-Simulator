@@ -15,7 +15,9 @@ from classes.Circuit import Circuit
 
 # testing circuit creation
 circuitExample = Circuit("bench-files\c17.bench.txt")
-circuitExample.pass_expected([1, 1, 1, 1], [0, 0, 0, 0])
+circuitExample.pass_expected([1, 0, 1, 1, 0], [1, 0])
+results = circuitExample.run_simulation([1, 0, 1, 1, 0])
+print(results)
 
 # # Simulation of connecting 2 wires to an AND gate
 # gate1 = Gate("AND")
