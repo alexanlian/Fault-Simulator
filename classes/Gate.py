@@ -60,7 +60,7 @@ Gate info:
     # And apply the right output value for all fanouts of the gate
     def operate(self):
         if self.gate_type == "AND":
-            if all(wire.value == 1 for wire in self.inputs):
+            if all(wire.get_effective_value == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 1
             else:
@@ -68,7 +68,7 @@ Gate info:
                     output.value = 0
 
         if self.gate_type == "OR":
-            if any(wire.value == 1 for wire in self.inputs):
+            if any(wire.get_effective_value == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 1
             else:
@@ -76,7 +76,7 @@ Gate info:
                     output.value = 0
 
         if self.gate_type == "NAND":
-            if all(wire.value == 1 for wire in self.inputs):
+            if all(wire.get_effective_value == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 0
             else:
@@ -84,7 +84,7 @@ Gate info:
                     output.value = 1
 
         if self.gate_type == "NOR":
-            if any(wire.value == 1 for wire in self.inputs):
+            if any(wire.get_effective_value == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 0
             else:
@@ -92,7 +92,7 @@ Gate info:
                     output.value = 1
 
         if self.gate_type == "XOR":
-            if sum(wire.value % 2 == 1 for wire in self.inputs):
+            if sum(wire.get_effective_value % 2 == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 1
             else:

@@ -2,6 +2,7 @@ from BenchmarkParsing import *
 from classes.Wire import *
 from classes.Gate import *
 
+
 class Circuit:
     def __init__(self, file_path):
         self.parsed_file = parse_bench_file(file_path)
@@ -54,8 +55,6 @@ class Circuit:
             self.wires[wire_label].set_single_input(input_vector[idx])
 
     def simulate(self):
-        # It's important to order the gates according to their dependencies
-        # For simplicity, we assume that the gates are listed in a topologically sorted manner in the benchmark
         for gate_label in self.parsed_file["gates"]:
             self.gates[gate_label].operate()
 

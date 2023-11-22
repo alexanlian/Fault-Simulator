@@ -17,11 +17,19 @@ class Wire:
     def get_connections(self):
         for gate in self.connections:
             print(gate.gate_type)
+
     # Set the inputs value
     # Again might be put in a separate file for setting values later on
     def set_single_input(self, value):
         if self.is_input == True:
             self.value = value
         else:
-            print('Cannot set the value of a non-input wire')
-    
+            print("Cannot set the value of a non-input wire")
+
+    def inject_fault(self, fault):
+        self.fault = fault
+
+    def get_effective_value(self):
+        if self.fault is not None:
+            return self.fault  # stuck-at fault value
+        return self.value
