@@ -1,9 +1,12 @@
 class Gate:
+    gate_counter = 0
     # Characterizing gates by their type, number of fanins and fanouts
     def __init__(self, gate_type):
         self.gate_type = gate_type
         self.inputs = []
         self.outputs = []
+        self.__class__.gate_counter += 1
+        self.gate_counter = self.__class__.gate_counter
 
     # Connecting each wire inputs to their outputs
     def connect(self, inputs, outputs):
@@ -15,23 +18,6 @@ class Gate:
         for wire in outputs:
             wire.connect(self)
             self.outputs.append(wire)
-
-    # Although will never be used as the circuit will be automatically generated
-    # I thought it would be fun to have this :)
-    def disconnect(self, label):
-        wire_found = False
-        if not wire_found:
-            for wire in self.inputs:
-                if wire.label == label:
-                    self.inputs.remove(wire)
-                    wire_found = True
-            for wire in self.outputs:
-                if wire.label == label:
-                    self.outputs.remove(wire)
-                    wire_found = True
-            # If trying to remove a wire not even connected to the gate
-            if wire_found == False:
-                print("This wire is not connected to this gate")
 
     # Get general information of the gate's connections and outputs
     def get_info(self):
@@ -76,7 +62,7 @@ Gate info:
                     output.value = 0
 
         if self.gate_type == "NAND":
-            if all(wire.get_effective_value == 1 for wire in self.inputs):
+            if all(wire.get_effective_value() == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 0
             else:
@@ -92,7 +78,7 @@ Gate info:
                     output.value = 1
 
         if self.gate_type == "XOR":
-            if sum(wire.get_effective_value % 2 == 1 for wire in self.inputs):
+            if sum(wire.get_effective_value() % 2 == 1 for wire in self.inputs):
                 for output in self.outputs:
                     output.value = 1
             else:
@@ -107,10 +93,37 @@ Gate info:
                 for output in self.outputs:
                     output.value = 0
 
-    # To be developed later, maybe in a separate file to inject values
-    # And maybe faults at the same token
-    def set_input_vector(self, vector):
-        for value in vector:
-            for wire_in in self.inputs:
-                if wire_in.is_input == True:
-                    wire_in.set_single_input(value)
+
+# Creating different classes for NOT and BUFFER as they can take only one input each
+class NotGate(Gate):
+    def __init__(self):
+        super().__init__('NOT')
+
+    def connect(self, inputs, outputs):
+        for input_wire in inputs:
+            self.inputs.append(input_wire)
+        for output_wire in outputs:
+            output_wire.connect(self)
+            self.outputs.append(output_wire)
+
+    def operate(self):
+        if self.inputs[0].get_effective_value() == 1:
+            for output in self.outputs:
+                output.value = 0
+        else:
+            for output in self.outputs:
+                output.value = 1
+
+class BufferGate(Gate):
+    def __init__(self):
+        super().__init__('BUFFER')
+
+    def connect(self, input_wire, output_wire):
+        self.inputs.append(input_wire)
+        output_wire.connect(self)
+        self.outputs.append(output_wire)
+
+    def operate(self):
+        value = self.inputs[0].get_effective_value()
+        for output in self.outputs:
+            output.value = value

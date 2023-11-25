@@ -33,3 +33,4 @@ class Wire:
         if self.fault is not None:
             return self.fault  # stuck-at fault value
         return self.value
+    
