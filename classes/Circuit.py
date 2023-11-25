@@ -8,6 +8,7 @@ class Circuit:
         self.parsed_file = parse_bench_file(file_path)
         print(self.parsed_file)
 
+        self.circuitName = self.parsed_file['circuit_name']
         self.gates = {}  # Dictionary to store Gate objects
         self.wires = {}  # Dictionary to store Wire objects
         self.input_count = 0
@@ -102,7 +103,7 @@ class Circuit:
 
             # Check for the first input
             vertices.append([value[0], node])
-            left_in = tuple(vertices[i])
+            left_in = tuple(vertices[counter])
             vertices_labels[left_in] = str(self.parsed_file['gate_types'][node][0]) + '-' + str(self.parsed_file['gate_types'][node][1])
 
             counter += 1
@@ -114,7 +115,7 @@ class Circuit:
             # Check for the second input otherwise
             else:
                 vertices.append([value[1], node])
-                right_in = tuple(vertices[i]) 
+                right_in = tuple(vertices[counter]) 
                 vertices_labels[right_in] = str(self.parsed_file['gate_types'][node][0]) + '-' + str(self.parsed_file['gate_types'][node][1])
                 counter += 1
 
