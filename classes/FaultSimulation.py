@@ -1,56 +1,86 @@
 import time
+import math
+
 
 class FaultSimulator:
     def __init__(self, circuit):
         self.circuit = circuit
 
-    def run_fault_simulation(self, fault_list, input_vectors):
+    def generate_input_patterns(self):
+        pattern_count = int(math.pow(2, self.circuit.input_count))
+        patterns = []
+        patterns_str = []
+        for i in range(pattern_count):
+            pattern = format(i, "0" + str(self.circuit.input_count) + "b")
+            # Convert the string pattern to an array of integers
+            patterns_str.append(pattern)
+            pattern_array = [int(bit) for bit in pattern]
+            patterns.append(pattern_array)
+        return patterns, patterns_str
+
+    def run_fault_simulation(self, fault_list):
         start_time = time.time()
 
-        original_outputs = []
-        fault_outputs = {fault: [] for fault in fault_list}
+        # Generate input patterns
+        input_patterns, patterns_str = self.generate_input_patterns()
 
-        # Run the circuit without faults
-        for vector in input_vectors:
-            self.circuit.set_input_values(vector)
-            self.circuit.simulate()
-            original_outputs.append(self.circuit.compute_output())
+        # Run fault-free simulation
+        fault_free_outputs = {}
+        print("input_patterns")
+        print(input_patterns)
+        for pattern_list, pattern_str in zip(input_patterns, patterns_str):
+            current_output = self.circuit.run_simulation(pattern_list)
+            fault_free_outputs[pattern_str] = current_output
+            print("current output")
+            print(current_output)
 
-        # Run the circuit with each fault
+        # Initialize counters for detected and undetectable faults
+        detected_faults = 0
+        undetectable_faults = 0
+
+        # Fault Injection and Simulation
         for fault in fault_list:
-            wire_label, fault_value = fault
-            self.circuit.wires[wire_label].inject_fault(fault_value)
+            fault_detected = False
+            for stuck_at_fault in range(2):
+                for pattern_list, pattern_str in zip(input_patterns, patterns_str):
+                    # Modify the circuit for the current fault
+                    original_value = self.circuit.wires[fault].value
+                    print("original value: " + str(original_value))
 
-            for vector in input_vectors:
-                self.circuit.set_input_values(vector)
-                self.circuit.simulate()
-                fault_outputs[fault].append(self.circuit.compute_output())
+                    # Modify the circuit for the current fault
+                    self.circuit.wires[fault].inject_fault(stuck_at_fault)
+                    print("Injected fault " + str(self.circuit.wires[fault].value))
 
-            # Reset the fault for the next iteration
-            self.circuit.wires[wire_label].inject_fault(None)
+                    # Run simulation with fault
+                    faulty_output = self.circuit.run_simulation(pattern_list)
+                    print("for pattern " + pattern_str)
+                    print("faulty_output is :::")
+                    print(faulty_output)
+                    # Compare with fault-free output
+                    if faulty_output != fault_free_outputs[pattern_str]:
+                        fault_detected = True
+                        print("fault is detected here")
+                        break
 
+                if fault_detected:
+                    detected_faults += 1
+                    print("number of faults detected +1")
+                else:
+                    undetectable_faults += 1
+                    print("number of faults not detectable +1")
+
+            self.circuit.wires[fault].value = original_value
+
+        # Calculating Fault Coverage and Efficiency
+        fault_coverage = detected_faults / len(fault_list)
+        fault_efficiency = detected_faults / (len(fault_list) - undetectable_faults)
+
+        # Measure simulation time
         end_time = time.time()
         simulation_time = end_time - start_time
 
-        # Calculate fault coverage
-        fault_coverage = self.calculate_fault_coverage(original_outputs, fault_outputs)
-
-        return simulation_time, fault_coverage
-
-    def calculate_fault_coverage(self, original_outputs, fault_outputs):
-        detected_faults = 0
-
-        for fault, outputs_with_fault in fault_outputs.items():
-            # Iterate over each set of outputs with the given fault
-            for i, fault_output in enumerate(outputs_with_fault):
-                # Compare the fault output with the original output
-                if fault_output != original_outputs[i]:
-                    detected_faults += 1
-                    break  # Move to the next fault once one detection is made
-
-        total_faults = len(fault_outputs)
-        if total_faults == 0:
-            return 0  # Avoid division by zero
-
-        fault_coverage = detected_faults / total_faults
-        return fault_coverage
+        return {
+            "Simulation Time": simulation_time,
+            "Fault Coverage": fault_coverage,
+            "Fault Efficiency": fault_efficiency,
+        }

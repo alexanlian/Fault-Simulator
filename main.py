@@ -29,8 +29,11 @@ for count in range(circuitExample.input_count):
 # Run the simulation without faults
 output_vector = circuitExample.run_simulation(input_vector)
 print("Simulation Results without Faults:", output_vector)
-
 circuitExample.pass_expected(input_vector, output_vector)
 
-graph = CircuitGraph(circuitExample)
-graph.draw_topological_graph()
+fault_list = [1]
+fault_sim = FaultSimulator(circuitExample)
+print(fault_sim.run_fault_simulation(fault_list))
+
+# graph = CircuitGraph(circuitExample)
+# graph.draw_topological_graph()

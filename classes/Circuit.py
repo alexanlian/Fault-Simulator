@@ -8,13 +8,13 @@ class Circuit:
         self.parsed_file = parse_bench_file(file_path)
         print(self.parsed_file)
 
-        self.circuitName = self.parsed_file['circuit_name']
+        self.circuitName = self.parsed_file["circuit_name"]
         self.gates = {}  # Dictionary to store Gate objects
         self.wires = {}  # Dictionary to store Wire objects
         self.input_count = 0
         self.output_count = 0
         self.create_circuit()
- 
+
         self.expectedInput = []
         self.expectedOutput = []
         self.inputVector = []
@@ -37,11 +37,11 @@ class Circuit:
         # Create Gate objects and connect wires
         for gate_label, gate_inputs in self.parsed_file["gates"].items():
             gate_type = self.parsed_file["gate_types"][gate_label][1]
-            if gate_type == 'NOT':
+            if gate_type == "NOT":
                 gate = NotGate()
-            elif gate_type == 'BUFFER':
+            elif gate_type == "BUFFER":
                 gate = BufferGate()
-            else: 
+            else:
                 gate = Gate(gate_type)
 
             self.inputs = [self.wires[input_label] for input_label in gate_inputs]
@@ -85,26 +85,31 @@ class Circuit:
 
     def run_simulation(self, input_vector):
         self.set_input_values(input_vector)
-        print('Simulating for input vector', input_vector)
+        print("Simulating for input vector", input_vector)
         self.simulate()
         return self.compute_output()
 
     # Preparing the graph by getting a dictionary of vertices and nodes
     def get_vertices(self):
-        nodes = self.parsed_file['gates'].keys() # The output wires
-        values = self.parsed_file['gates'].values() # The input wires
-        gate_types = self.parsed_file['gate_types'].values() # The gate types of each input-output pair
+        nodes = self.parsed_file["gates"].keys()  # The output wires
+        values = self.parsed_file["gates"].values()  # The input wires
+        gate_types = self.parsed_file[
+            "gate_types"
+        ].values()  # The gate types of each input-output pair
 
         vertices = []
         vertices_labels = {}
-        counter = 0 # Counter 
+        counter = 0  # Counter
 
         for node, value, gate_type in zip(nodes, values, gate_types):
-
             # Check for the first input
             vertices.append([value[0], node])
             left_in = tuple(vertices[counter])
-            vertices_labels[left_in] = str(self.parsed_file['gate_types'][node][0]) + '-' + str(self.parsed_file['gate_types'][node][1])
+            vertices_labels[left_in] = (
+                str(self.parsed_file["gate_types"][node][0])
+                + "-"
+                + str(self.parsed_file["gate_types"][node][1])
+            )
 
             counter += 1
 
@@ -115,22 +120,24 @@ class Circuit:
             # Check for the second input otherwise
             else:
                 vertices.append([value[1], node])
-                right_in = tuple(vertices[counter]) 
-                vertices_labels[right_in] = str(self.parsed_file['gate_types'][node][0]) + '-' + str(self.parsed_file['gate_types'][node][1])
+                right_in = tuple(vertices[counter])
+                vertices_labels[right_in] = (
+                    str(self.parsed_file["gate_types"][node][0])
+                    + "-"
+                    + str(self.parsed_file["gate_types"][node][1])
+                )
                 counter += 1
 
         # print('vertices:')
         # print(vertices_labels)
         return vertices_labels
-    
+
     # Method to color code each node as 0 or 1 (representing wires)
     def get_colors(self):
         colors = {}
         for wire_label in self.wires.keys():
-            if (self.wires[wire_label].get_effective_value() == 1):
-                colors[wire_label] = 'green'
+            if self.wires[wire_label].get_effective_value() == 1:
+                colors[wire_label] = "green"
             else:
-                colors[wire_label] = 'red'    
-        return colors  
-
-
+                colors[wire_label] = "red"
+        return colors
