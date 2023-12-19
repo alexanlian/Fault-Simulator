@@ -67,66 +67,66 @@ def parse_bench_file(file_path):
             print(gate_expression)
             # Store the gate expression and type in the gates dictionary
             gates[gate_number] = gate_expression  # Store as a list of integers
-            gate_types[gate_number] = [str(gate_counter), gate_type]
+            gate_types[str(gate_number)] = [str(gate_counter), gate_type]
             gate_counter += 1
 
-            gate_expressions.append(gate_expression)
 
-        #     # Update 'wires' dictionary with the gate output
-            
-        #     if str(gate_number) not in wires:
-        #         wires[str(gate_number)] = True
-        #         fanout_count[gate_number] = 0
-        #     else:
-        #         # Handling fanouts for the gate output
-        #         fanout_count[gate_number] += 1
-        #         wires[str(gate_number)+"-"+str(fanout_count[gate_number])] = True
-              
+    gates_keys_list = list(gates.keys())
+    gates_values_list = list(gates.values())
 
-        # # Update 'wires' dictionary with the gate inputs
-        # for gate_expression in gate_expressions:
-        #     for wire in gate_expression:
-        #         if str(wire) not in wires:
-        #             wires[str(wire)] = True
-        #             fanout_count[wire] = 0
-        #         else:
-        #             # Handling fanouts for the gate inputs
-        #             fanout_count[wire] += 1
-        #             wires[str(wire)+"-"+str(fanout_count[wire])] = True
-        #             if fanout_count[wire] == 2:
-        #                 wires[str(wire)+"-"+str(fanout_count[wire]+1)] = True
-        
     wire_tracker = {}
     wire_list = []
-    alphabet = "abcdefghijklmnopqrstuvwxyz"
-    for gate_expression in gate_expressions:
+    for gate_expression in gates.values():
         for fan_in in gate_expression:
             if fan_in not in wire_tracker:
                 wire_tracker[fan_in] = 1
             else:
                 wire_tracker[fan_in] += 1
-    print(wire_tracker)
+    for output_wire in outputs:
+        wire_tracker[output_wire] = 1
 
     for wire in wire_tracker.keys():
         if wire_tracker[wire] == 1:
-            wire_list.append(str(wire))
-        else:
-            wire_list.append(str(wire))
-            for fan_out_count in range(wire_tracker[wire]):
-                wire_list.append(str(wire)+str(alphabet[fan_out_count]))
+            wire_tracker[wire] = 0
+    
+    print("Wire_tracker")
+    print(wire_tracker)
 
-    print(wire_list)
+    for wire in wire_tracker.keys():
+            if wire_tracker[wire] == 0:
+                wire_list.append(str(wire))
+            else:
+                wire_list.append(str(wire))
+                for fan_out_count in range(wire_tracker[wire]):
+                    wire_list.append(str(wire)+"-"+str(fan_out_count+1))
+        
+    for key in gates.keys():
+        for index, value in enumerate(gates[key]):
+            if wire_tracker[value] > 0:
+                gates[key][index]= wire_list[wire_list.index(str(value)) + (wire_tracker[value] - 1)]
+                wire_tracker[value] += 1  
+    
+    updated_gates = {}
+    for key, value in gates.items():
+        str_key = str(key)  # Convert key to string
+        str_values = [str(val) if isinstance(val, int) else val for val in value]  # Convert integers in values to strings
+        updated_gates[str_key] = str_values
+
+    gates = updated_gates
+    del(updated_gates)
+
+
+
     # Return a dictionary containing the parsed information
     return {
-        "gate_expressions": gate_expressions,
+        # "gate_expressions": gate_expressions,
         "circuit_name": circuit_name,
         "inputs_count": inputs_count,
         "outputs_count": outputs_count,
         "inputs": inputs,
         "outputs": outputs,
         "inverters": inverters_count,
-        "wires keys": wire_list,
-        "fanout_count": fanout_count,
+        "wires list": wire_list,
         "gates": gates,
         "gate_types": gate_types,  # Include gate types in the result
     }

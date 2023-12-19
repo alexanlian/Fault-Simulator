@@ -36,7 +36,7 @@ class Circuit:
 
         # Create Gate objects and connect wires
         for gate_label, gate_inputs in self.parsed_file["gates"].items():
-            gate_type = self.parsed_file["gate_types"][gate_label][1]
+            gate_type = self.parsed_file["gate_types"][str(gate_label)][1]
             if gate_type == "NOT":
                 gate = NotGate()
             elif gate_type == "BUFFER":
@@ -44,7 +44,7 @@ class Circuit:
             else:
                 gate = Gate(gate_type)
 
-            self.inputs = [self.wires[input_label] for input_label in gate_inputs]
+            self.inputs = [self.wires[str(input_label)] for input_label in gate_inputs]
             self.outputs = [self.wires[gate_label]]
 
             gate.connect(self.inputs, self.outputs)
