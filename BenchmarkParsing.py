@@ -12,7 +12,8 @@ def parse_bench_file(file_path):
     outputs = []  # List to store output numbers
     inverters_count = 0  # Initialize inverter count
     gates = {}  # Dictionary to store gate expressions and types
-    wires = []
+    wires = {}  # Dictionary to store wires (netlist)
+    fanout_count = {} # Dictionary to keep count of fanouts
 
     # Define a dictionary to map gate numbers to gate types
     gate_types = {}
@@ -26,16 +27,15 @@ def parse_bench_file(file_path):
             circuit_name = str(line[2:])
 
         if line.endswith("inputs"):
-            inputs_count = int(line[2:].replace(' inputs',''))
+            inputs_count = int(line[2:].replace(" inputs", ""))
 
         if line.endswith("outputs"):
-            outputs_count = int(line[2].replace(' inputs',''))
+            outputs_count = int(line[2].replace(" inputs", ""))
 
         # Check if the line starts with 'INPUT'
         if line.startswith("INPUT"):
             # Extract the input number and add it to the inputs list
             inputs.append(int(line.split("(")[1].split(")")[0]))
-            wires.append(int(line.split("(")[1].split(")")[0]))
 
         # Check if the line starts with 'OUTPUT'
         elif line.startswith("OUTPUT"):
@@ -66,27 +66,37 @@ def parse_bench_file(file_path):
             gates[gate_number] = gate_expression  # Store as a list of integers
             gate_types[gate_number] = [str(gate_counter), gate_type]
             gate_counter += 1
-            
-            wires.append(gate_number)
-            for fan_ins in gates.values():
-                fan_out_counter = 0
-                for fan_in in fan_ins:
-                    print(fan_in)
-                    if gate_number == fan_in:
-                        wires.append(str(str(gate_number)+"-"+fan_out_counter))
-                        fan_out_counter += 1
 
-            
+            # Update 'wires' dictionary with the gate output
+            if gate_number not in wires:
+                wires[gate_number] = True
+                fanout_count[gate_number] = 0
+            else:
+                # Handling fanouts for the gate output
+                fanout_count[gate_number] += 1
+                wires[str(gate_number)+"-"+str(fanout_count[gate_number])] = True
+
+            # Update 'wires' dictionary with the gate inputs
+            for wire in gate_expression:
+                if wire not in wires:
+                    wires[wire] = True
+                    fanout_count[wire] = 0
+                else:
+                    # Handling fanouts for the gate inputs
+                    fanout_count[wire] += 1
+                    wires[str(wire)+"-"+str(fanout_count[wire])] = True
+
 
     # Return a dictionary containing the parsed information
     return {
-        "netlist": wires,
         "circuit_name": circuit_name,
         "inputs_count": inputs_count,
         "outputs_count": outputs_count,
         "inputs": inputs,
         "outputs": outputs,
         "inverters": inverters_count,
+        "wires": wires,
+        "fanout_count": fanout_count,
         "gates": gates,
         "gate_types": gate_types,  # Include gate types in the result
     }
