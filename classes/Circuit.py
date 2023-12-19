@@ -25,14 +25,22 @@ class Circuit:
         self.input_count = self.parsed_file["inputs_count"]
         self.output_count = self.parsed_file["outputs_count"]
 
-        for label in (
-            self.parsed_file["inputs"]
-            + self.parsed_file["outputs"]
-            + list(self.parsed_file["gates"].keys())
-        ):
-            is_input = label in self.parsed_file["inputs"]
-            is_output = label in self.parsed_file["outputs"]
-            self.wires[label] = Wire(label, is_input, is_output)
+        # for label in (
+        #     self.parsed_file["inputs"]
+        #     + self.parsed_file["outputs"]
+        #     + list(self.parsed_file["gates"].keys())
+        # ):
+        #     is_input = str(label) in self.parsed_file["inputs"]
+        #     is_output = str(label) in self.parsed_file["outputs"]
+        #     self.wires[str(label)] = Wire(str(label), is_input, is_output)
+
+        for label in self.parsed_file["wires list"]:
+            if str(label) in str(self.parsed_file["inputs"]):
+                self.wires[str(label)] = Wire(str(label), is_input=True)
+            elif str(label) in str(self.parsed_file["outputs"]):
+                self.wires[str(label)] = Wire(str(label), is_output=True)
+            else:
+                self.wires[str(label)] = Wire(str(label))
 
         # Create Gate objects and connect wires
         for gate_label, gate_inputs in self.parsed_file["gates"].items():
@@ -44,7 +52,7 @@ class Circuit:
             else:
                 gate = Gate(gate_type)
 
-            self.inputs = [self.wires[str(input_label)] for input_label in gate_inputs]
+            self.inputs = [self.wires[(str(input_label))] for input_label in gate_inputs]
             self.outputs = [self.wires[gate_label]]
 
             gate.connect(self.inputs, self.outputs)
@@ -71,7 +79,7 @@ class Circuit:
             )
 
         for index, wire_label in enumerate(self.parsed_file["inputs"]):
-            self.wires[wire_label].set_single_input(input_vector[index])
+            self.wires[str(wire_label)].set_single_input(input_vector[index])
 
     def simulate(self):
         for gate_label in self.parsed_file["gates"]:
@@ -80,7 +88,7 @@ class Circuit:
     def compute_output(self):
         output_vector = []
         for output_label in self.parsed_file["outputs"]:
-            output_vector.append(self.wires[output_label].value)
+            output_vector.append(self.wires[str(output_label)].value)
         return output_vector
 
     def run_simulation(self, input_vector):

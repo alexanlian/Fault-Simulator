@@ -71,9 +71,6 @@ def parse_bench_file(file_path):
             gate_counter += 1
 
 
-    gates_keys_list = list(gates.keys())
-    gates_values_list = list(gates.values())
-
     wire_tracker = {}
     wire_list = []
     for gate_expression in gates.values():
