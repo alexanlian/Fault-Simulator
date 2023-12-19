@@ -13,7 +13,7 @@ def parse_bench_file(file_path):
     inverters_count = 0  # Initialize inverter count
     gates = {}  # Dictionary to store gate expressions and types
     wires = {}  # Dictionary to store wires (netlist)
-    fanout_count = {} # Dictionary to keep count of fanouts
+    fanout_count = {}  # Dictionary to keep count of fanouts
 
     # Define a dictionary to map gate numbers to gate types
     gate_types = {}
@@ -68,24 +68,25 @@ def parse_bench_file(file_path):
             gate_counter += 1
 
             # Update 'wires' dictionary with the gate output
-            if gate_number not in wires:
-                wires[gate_number] = True
+            if str(gate_number) not in wires:
+                wires[str(gate_number)] = True
                 fanout_count[gate_number] = 0
             else:
                 # Handling fanouts for the gate output
                 fanout_count[gate_number] += 1
-                wires[str(gate_number)+"-"+str(fanout_count[gate_number])] = True
+                wires[str(gate_number) + "-" + str(fanout_count[gate_number])] = True
 
             # Update 'wires' dictionary with the gate inputs
             for wire in gate_expression:
-                if wire not in wires:
-                    wires[wire] = True
+                if str(wire) not in wires:
+                    wires[str(wire)] = True
                     fanout_count[wire] = 0
                 else:
                     # Handling fanouts for the gate inputs
                     fanout_count[wire] += 1
-                    wires[str(wire)+"-"+str(fanout_count[wire])] = True
+                    wires[str(wire) + "-" + str(fanout_count[wire])] = True
 
+    wire_list = wires.keys()
 
     # Return a dictionary containing the parsed information
     return {
@@ -95,7 +96,7 @@ def parse_bench_file(file_path):
         "inputs": inputs,
         "outputs": outputs,
         "inverters": inverters_count,
-        "wires": wires,
+        "wires": wire_list,
         "fanout_count": fanout_count,
         "gates": gates,
         "gate_types": gate_types,  # Include gate types in the result
