@@ -128,8 +128,6 @@ class Circuit:
                 )
                 counter += 1
 
-        # print('vertices:')
-        # print(vertices_labels)
         return vertices_labels
 
     # Method to color code each node as 0 or 1 (representing wires)

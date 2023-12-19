@@ -20,14 +20,14 @@ class FaultSimulator:
 
     def run_fault_simulation(self, fault_list):
         start_time = time.time()
-
+     
         # Generate input patterns
         input_patterns, patterns_str = self.generate_input_patterns()
 
         # Run fault-free simulation
         fault_free_outputs = {}
         print("input_patterns")
-        print(input_patterns)
+        print(patterns_str)
         for pattern_list, pattern_str in zip(input_patterns, patterns_str):
             current_output = self.circuit.run_simulation(pattern_list)
             fault_free_outputs[pattern_str] = current_output

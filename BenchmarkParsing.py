@@ -12,6 +12,7 @@ def parse_bench_file(file_path):
     outputs = []  # List to store output numbers
     inverters_count = 0  # Initialize inverter count
     gates = {}  # Dictionary to store gate expressions and types
+    wires = []
 
     # Define a dictionary to map gate numbers to gate types
     gate_types = {}
@@ -34,6 +35,7 @@ def parse_bench_file(file_path):
         if line.startswith("INPUT"):
             # Extract the input number and add it to the inputs list
             inputs.append(int(line.split("(")[1].split(")")[0]))
+            wires.append(int(line.split("(")[1].split(")")[0]))
 
         # Check if the line starts with 'OUTPUT'
         elif line.startswith("OUTPUT"):
@@ -64,9 +66,21 @@ def parse_bench_file(file_path):
             gates[gate_number] = gate_expression  # Store as a list of integers
             gate_types[gate_number] = [str(gate_counter), gate_type]
             gate_counter += 1
+            
+            wires.append(gate_number)
+            for fan_ins in gates.values():
+                fan_out_counter = 0
+                for fan_in in fan_ins:
+                    print(fan_in)
+                    if gate_number == fan_in:
+                        wires.append(str(str(gate_number)+"-"+fan_out_counter))
+                        fan_out_counter += 1
+
+            
 
     # Return a dictionary containing the parsed information
     return {
+        "netlist": wires,
         "circuit_name": circuit_name,
         "inputs_count": inputs_count,
         "outputs_count": outputs_count,

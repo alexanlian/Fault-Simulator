@@ -32,8 +32,9 @@ print("Simulation Results without Faults:", output_vector)
 circuitExample.pass_expected(input_vector, output_vector)
 
 fault_list = [1]
+fault_list = circuitExample.wires.keys()
 fault_sim = FaultSimulator(circuitExample)
 print(fault_sim.run_fault_simulation(fault_list))
 
-# graph = CircuitGraph(circuitExample)
-# graph.draw_topological_graph()
+graph = CircuitGraph(circuitExample)
+graph.draw_topological_graph()
