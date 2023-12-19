@@ -80,6 +80,8 @@ class FaultSimulator:
         simulation_time = end_time - start_time
 
         return {
+            "Detected faults: ": detected_faults,
+            "Undetectable faults: ": undetectable_faults,
             "Simulation Time": simulation_time,
             "Fault Coverage": fault_coverage,
             "Fault Efficiency": fault_efficiency,
