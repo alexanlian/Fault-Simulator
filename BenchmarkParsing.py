@@ -13,7 +13,7 @@ def parse_bench_file(file_path):
     inverters_count = 0  # Initialize inverter count
     gates = {}  # Dictionary to store gate expressions and types
     wires = {}  # Dictionary to store wires (netlist)
-    fanout_count = {} # Dictionary to keep count of fanouts
+    fanout_count = {}  # Dictionary to keep count of fanouts
 
     # Define a dictionary to map gate numbers to gate types
     gate_types = {}
