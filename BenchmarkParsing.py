@@ -1,121 +1,122 @@
 def parse_bench_file(file_path):
     # Open the specified file in read mode
     with open(file_path, "r") as file:
-        # Read the content of the file
+        # Read the entire content of the file into a string
         file_content = file.read()
 
-    # Initialize lists and counters to store information
-    circuit_name = ""
-    inputs_count = 0
-    outputs_count = 0
-    inputs = []  # List to store input numbers
-    outputs = []  # List to store output numbers
-    inverters_count = 0  # Initialize inverter count
-    gates = {}  # Dictionary to store gate expressions and types
-    wires = {}  # Dictionary to store wires (netlist)
-    fanout_count = {}  # Dictionary to keep count of fanouts
+    # Initialize variables to store circuit information
+    circuit_name = ""  # Name of the circuit
+    inputs_count = 0  # Number of inputs
+    outputs_count = 0  # Number of outputs
+    inputs = []  # List to store input identifiers
+    outputs = []  # List to store output identifiers
+    inverters_count = 0  # Number of inverters
+    gates = {}  # Dictionary to store gate information
+    wires = {}  # Dictionary to store wire (netlist) information
+    fanout_count = {}  # Dictionary to track the fanout of each wire
 
-    # Define a dictionary to map gate numbers to gate types
+    # Dictionary to map gate numbers to their types
     gate_types = {}
-    gate_counter = 1
+    gate_counter = 1  # Counter for gate numbers
 
-    # Iterate through each line in the file
+    # Initialize a dictionary to track wires and fanouts
+    wire_tracker = {}
+    wire_list = []
+
+    # Process each line in the file content
     for line in file_content.split("\n"):
-        line = line.strip()  # Remove leading and trailing whitespaces
+        line = line.strip()  # Remove leading/trailing whitespace
 
+        # Parse the circuit name
         if line.startswith("# c"):
             circuit_name = str(line[2:])
 
+        # Parse the number of inputs
         if line.endswith("inputs"):
             inputs_count = int(line[2:].replace(" inputs", ""))
 
+        # Parse the number of outputs
         if line.endswith("outputs"):
-            outputs_count = int(line[2].replace(" inputs", ""))
+            outputs_count = int(line[2:].replace(" outputs", ""))
 
-        # Check if the line starts with 'INPUT'
+        # Parse inputs
         if line.startswith("INPUT"):
-            # Extract the input number and add it to the inputs list
             inputs.append(int(line.split("(")[1].split(")")[0]))
 
-        # Check if the line starts with 'OUTPUT'
+        # Parse outputs
         elif line.startswith("OUTPUT"):
-            # Extract the output number and add it to the outputs list
             outputs.append(int(line.split("(")[1].split(")")[0]))
 
-        # Check if the line starts with '#', indicating metadata
+        # Parse metadata about inverters
         elif line.startswith("#"):
             parts = line.split(" ")
             if parts[1].lower() == "inverter":
-                # Extract the inverter count from the metadata
                 inverters_count = int(parts[2])
 
-        # Check if the line contains a gate assignment
+        # Parse gate definitions
         elif line and "=" in line:
             parts = line.split("=")
-            # Extract the gate number, gate expression, and gate type
-            gate_number = int(parts[0].strip())  # Convert gate_number to an integer
+            gate_number = int(parts[0].strip())
             gate_info = parts[1].strip().split("(")
             gate_type = gate_info[0]
-            gate_expression = (
-                gate_info[1].split(")")[0].split(",")
-            )  # Convert to a list of integers
-            gate_expression = [
-                int(x) for x in gate_expression
-            ]  # Convert each element to an integer
-            print("gate expression")
-            print(gate_expression)
-            # Store the gate expression and type in the gates dictionary
-            gates[gate_number] = gate_expression  # Store as a list of integers
+            gate_expression = [int(x) for x in gate_info[1].split(")")[0].split(",")]
+
+            # Store gate expression and type
+            gates[gate_number] = gate_expression
             gate_types[str(gate_number)] = [str(gate_counter), gate_type]
             gate_counter += 1
 
-
-    wire_tracker = {}
-    wire_list = []
+    # Count the fan-ins for each wire
     for gate_expression in gates.values():
         for fan_in in gate_expression:
             if fan_in not in wire_tracker:
                 wire_tracker[fan_in] = 1
             else:
                 wire_tracker[fan_in] += 1
+
+    # Set the output wires fan-in count to 1
     for output_wire in outputs:
         wire_tracker[output_wire] = 1
 
+    # Update wire tracker for wires with only one connection
     for wire in wire_tracker.keys():
         if wire_tracker[wire] == 1:
             wire_tracker[wire] = 0
-    
+
+    # Copy the wire tracker to fanout counter
     fanout_counter = wire_tracker.copy()
 
+    # Create a list of wires and their fanouts
     for wire in wire_tracker.keys():
-            if wire_tracker[wire] == 0:
-                wire_list.append(str(wire))
-            else:
-                wire_list.append(str(wire))
-                for fan_out_count in range(wire_tracker[wire]):
-                    wire_list.append(str(wire)+"-"+str(fan_out_count+1))
-                   
-        
+        if wire_tracker[wire] == 0:
+            wire_list.append(str(wire))
+        else:
+            wire_list.append(str(wire))
+            for fan_out_count in range(wire_tracker[wire]):
+                wire_list.append(str(wire) + "-" + str(fan_out_count + 1))
+
+    # Update gates with fanout information
     for key in gates.keys():
         for index, value in enumerate(gates[key]):
             if wire_tracker[value] > 0:
-                gates[key][index]= wire_list[wire_list.index(str(value)) + (wire_tracker[value] - 1)]
-                wire_tracker[value] += 1  
-    
+                gates[key][index] = wire_list[
+                    wire_list.index(str(value)) + (wire_tracker[value] - 1)
+                ]
+                wire_tracker[value] += 1
+
+    # Convert gates dictionary to use string keys and values
     updated_gates = {}
     for key, value in gates.items():
-        str_key = str(key)  # Convert key to string
-        str_values = [str(val) if isinstance(val, int) else val for val in value]  # Convert integers in values to strings
+        str_key = str(key)
+        str_values = [str(val) if isinstance(val, int) else val for val in value]
         updated_gates[str_key] = str_values
 
+    # Update the gates dictionary and clean up
     gates = updated_gates
-    del(updated_gates)
+    del updated_gates
 
-
-
-    # Return a dictionary containing the parsed information
+    # Return the parsed circuit information as a dictionary
     return {
-        # "gate_expressions": gate_expressions,
         "circuit_name": circuit_name,
         "inputs_count": inputs_count,
         "outputs_count": outputs_count,
@@ -125,5 +126,5 @@ def parse_bench_file(file_path):
         "inverters": inverters_count,
         "wires list": wire_list,
         "gates": gates,
-        "gate_types": gate_types,  # Include gate types in the result
+        "gate_types": gate_types,
     }
