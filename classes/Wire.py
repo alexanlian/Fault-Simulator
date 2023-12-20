@@ -21,10 +21,10 @@ class Wire:
     # Set the inputs value
     # Again might be put in a separate file for setting values later on
     def set_single_input(self, value):
-        if self.is_input == True:
-            self.value = value
-        else:
-            print("Cannot set the value of a non-input wire")
+        # if self.is_input == True:
+        self.value = value
+        # else:
+        #     print("Cannot set the value of a non-input wire")
 
     def inject_fault(self, fault):
         self.fault = fault

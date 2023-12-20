@@ -64,10 +64,10 @@ class FaultSimulator:
 
                 if fault_detected:
                     detected_faults += 1
-                    print("number of faults detected +1")
+                    print("number of faults detected so far: " + str(detected_faults))
                 else:
                     undetectable_faults += 1
-                    print("number of faults not detectable +1")
+                    print("number of faults not detectable so far: " + str(undetectable_faults))
 
             self.circuit.wires[fault].value = original_value
 
