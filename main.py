@@ -1,13 +1,9 @@
-from BenchmarkParsing import parse_bench_file
-import matplotlib.pyplot as plt
-from classes.Gate import Gate, NotGate, BufferGate
-from classes.Wire import Wire
 from classes.Circuit import Circuit
 from classes.FaultSimulation import FaultSimulator
 from classes.CircuitGraph import CircuitGraph
 
 # testing circuit creation
-circuitExample = Circuit("bench-files\c17.bench.txt")
+circuitExample = Circuit("bench-files\c432.bench.txt")
 print(
     "This circuit has",
     circuitExample.input_count,
@@ -34,10 +30,10 @@ for wire in circuitExample.wires.keys():
     print("labels and values")
     print(circuitExample.wires[wire].label, circuitExample.wires[wire].value)
 
-
-# fault_list = ['1','2']
-# fault_sim = FaultSimulator(circuitExample)
-# print(fault_sim.run_fault_simulation(fault_list))
+# print(circuitExample.get_vertices())
+fault_list = ['1']
+fault_sim = FaultSimulator(circuitExample)
+print(fault_sim.run_fault_simulation(fault_list))
 
 # graph = CircuitGraph(circuitExample)
 # graph.draw_topological_graph()

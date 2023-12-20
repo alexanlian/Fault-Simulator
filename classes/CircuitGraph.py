@@ -15,6 +15,7 @@ class CircuitGraph:
         for layer, nodes in enumerate(nx.topological_generations(self.graph)):
             # `multipartite_layout` expects the layer as a node attribute, so add the
             # numeric layer value as a node attribute
+            print(nodes)
             for node in nodes:
                 self.graph.nodes[node]["layer"] = layer
 

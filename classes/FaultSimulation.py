@@ -1,6 +1,6 @@
 import time
 import math
-
+import csv
 
 class FaultSimulator:
     def __init__(self, circuit):
@@ -81,8 +81,6 @@ class FaultSimulator:
         # Measure simulation time
         end_time = time.time()
         simulation_time = end_time - start_time
-
-        print(fault_sim_stats)
 
         return {
             "Detected faults: ": detected_faults,
