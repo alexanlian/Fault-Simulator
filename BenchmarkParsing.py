@@ -106,7 +106,7 @@ def parse_bench_file(file_path):
     for key, value in gates.items():
         str_key = str(key)  # Convert key to string
         str_values = [
-            str(val) if isinsFtance(val, int) else val for val in value
+            str(val) if isinstance(val, int) else val for val in value
         ]  # Convert integers in values to strings
         updated_gates[str_key] = str_values
 
