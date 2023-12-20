@@ -39,7 +39,7 @@ for wire in circuitExample.wires.keys():
     print(circuitExample.wires[wire].label, circuitExample.wires[wire].value)
 
 # Define a list of faults to simulate
-fault_list = ["1", "2", "3", "10", "6", "7", "16", "3-2", "11-1", "22"]
+fault_list = ["3-2", "22"]
 # Create an instance of the FaultSimulator
 fault_sim = FaultSimulator(circuitExample)
 # Run the fault simulation and print the results
