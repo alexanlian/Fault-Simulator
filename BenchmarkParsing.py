@@ -70,10 +70,6 @@ def parse_bench_file(file_path):
             gate_types[str(gate_number)] = [str(gate_counter), gate_type]
             gate_counter += 1
 
-
-    gates_keys_list = list(gates.keys())
-    gates_values_list = list(gates.values())
-
     wire_tracker = {}
     wire_list = []
     for gate_expression in gates.values():
@@ -88,34 +84,36 @@ def parse_bench_file(file_path):
     for wire in wire_tracker.keys():
         if wire_tracker[wire] == 1:
             wire_tracker[wire] = 0
-    
+
     print("Wire_tracker")
     print(wire_tracker)
 
     for wire in wire_tracker.keys():
-            if wire_tracker[wire] == 0:
-                wire_list.append(str(wire))
-            else:
-                wire_list.append(str(wire))
-                for fan_out_count in range(wire_tracker[wire]):
-                    wire_list.append(str(wire)+"-"+str(fan_out_count+1))
-        
+        if wire_tracker[wire] == 0:
+            wire_list.append(str(wire))
+        else:
+            wire_list.append(str(wire))
+            for fan_out_count in range(wire_tracker[wire]):
+                wire_list.append(str(wire) + "-" + str(fan_out_count + 1))
+
     for key in gates.keys():
         for index, value in enumerate(gates[key]):
             if wire_tracker[value] > 0:
-                gates[key][index]= wire_list[wire_list.index(str(value)) + (wire_tracker[value] - 1)]
-                wire_tracker[value] += 1  
-    
+                gates[key][index] = wire_list[
+                    wire_list.index(str(value)) + (wire_tracker[value] - 1)
+                ]
+                wire_tracker[value] += 1
+
     updated_gates = {}
     for key, value in gates.items():
         str_key = str(key)  # Convert key to string
-        str_values = [str(val) if isinstance(val, int) else val for val in value]  # Convert integers in values to strings
+        str_values = [
+            str(val) if isinsFtance(val, int) else val for val in value
+        ]  # Convert integers in values to strings
         updated_gates[str_key] = str_values
 
     gates = updated_gates
-    del(updated_gates)
-
-
+    del updated_gates
 
     # Return a dictionary containing the parsed information
     return {
