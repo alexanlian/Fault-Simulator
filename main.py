@@ -30,9 +30,12 @@ for count in range(circuitExample.input_count):
 output_vector = circuitExample.run_simulation(input_vector)
 print("Simulation Results without Faults:", output_vector)
 circuitExample.pass_expected(input_vector, output_vector)
+for wire in circuitExample.wires.keys():
+    print("labels and values")
+    print(circuitExample.wires[wire].label, circuitExample.wires[wire].value)
 
 
-# fault_list = ['1']
+# fault_list = ['1','2']
 # fault_sim = FaultSimulator(circuitExample)
 # print(fault_sim.run_fault_simulation(fault_list))
 

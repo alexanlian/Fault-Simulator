@@ -26,13 +26,15 @@ class FaultSimulator:
 
         # Run fault-free simulation
         fault_free_outputs = {}
+        fault_sim_stats = {}
         print("input_patterns")
         print(patterns_str)
         for pattern_list, pattern_str in zip(input_patterns, patterns_str):
             current_output = self.circuit.run_simulation(pattern_list)
             fault_free_outputs[pattern_str] = current_output
-            print("current output")
-            print(current_output)
+            # print("current output")
+            # print(current_output)
+            fault_sim_stats[pattern_str] = [current_output]
 
         # Initialize counters for detected and undetectable faults
         detected_faults = 0
@@ -54,12 +56,13 @@ class FaultSimulator:
                     # Run simulation with fault
                     faulty_output = self.circuit.run_simulation(pattern_list)
                     print("for pattern " + pattern_str)
-                    print("faulty_output is :::")
+                    print("faulty_output is :")
                     print(faulty_output)
                     # Compare with fault-free output
                     if faulty_output != fault_free_outputs[pattern_str]:
                         fault_detected = True
                         print("fault is detected here")
+                        fault_sim_stats[pattern_str].append((fault, "stuck-at-"+str(stuck_at_fault),faulty_output))
                         break
 
                 if fault_detected:
@@ -78,6 +81,8 @@ class FaultSimulator:
         # Measure simulation time
         end_time = time.time()
         simulation_time = end_time - start_time
+
+        print(fault_sim_stats)
 
         return {
             "Detected faults: ": detected_faults,
