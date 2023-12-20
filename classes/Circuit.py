@@ -88,17 +88,20 @@ class Circuit:
             )
 
         for index, wire_label in enumerate(self.parsed_file["inputs"]):
-            # Set value for each input wire and its fanouts, if any
-            if self.parsed_file["fanout_count"][wire_label] > 0:
-                for i in range(1, self.parsed_file["fanout_count"][wire_label] + 1):
-                    fanout_wire = str(
-                        self.parsed_file["wires list"][
-                            self.parsed_file["wires list"].index(str(wire_label)) + i
-                        ]
-                    )
-                    self.wires[fanout_wire].set_single_input(input_vector[index])
-            else:
+                # Check if the wire label has a fanout (indicated by a dash)
+                # print("Dealing with wire:")
+                # print(wire_label)
+                if self.parsed_file["fanout_count"][wire_label] > 0:
+                    for i in range(1, self.parsed_file["fanout_count"][wire_label] + 1):
+                    # Iterate through the fanouts and set their values
+                        fanout_wire = str(self.parsed_file["wires list"][self.parsed_file["wires list"].index(str(wire_label))+i])
+                        self.wires[fanout_wire].set_single_input(input_vector[index])
+                        # print(f"Wire {fanout_wire} value: {self.wires[str(fanout_wire)].value}")
+                # else:
+                    # Set value for the wire label itself
                 self.wires[str(wire_label)].set_single_input(input_vector[index])
+                    # print(f"Wire {wire_label} value: {self.wires[str(wire_label)].value}")
+
 
     # Method to simulate the circuit
     def simulate(self):
