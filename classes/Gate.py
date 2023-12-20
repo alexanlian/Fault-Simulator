@@ -1,5 +1,6 @@
 class Gate:
     gate_counter = 0
+
     # Characterizing gates by their type, number of fanins and fanouts
     def __init__(self, gate_type):
         self.gate_type = gate_type
@@ -97,7 +98,7 @@ Gate info:
 # Creating different classes for NOT and BUFFER as they can take only one input each
 class NotGate(Gate):
     def __init__(self):
-        super().__init__('NOT')
+        super().__init__("NOT")
 
     def connect(self, inputs, outputs):
         for input_wire in inputs:
@@ -114,9 +115,10 @@ class NotGate(Gate):
             for output in self.outputs:
                 output.value = 1
 
+
 class BufferGate(Gate):
     def __init__(self):
-        super().__init__('BUFFER')
+        super().__init__("BUFFER")
 
     def connect(self, input_wire, output_wire):
         self.inputs.append(input_wire)

@@ -24,7 +24,7 @@ class Circuit:
         # Create Wire objects for inputs, outputs, and internal connections
         self.input_count = self.parsed_file["inputs_count"]
         self.output_count = self.parsed_file["outputs_count"]
-   
+
         for label in self.parsed_file["wires list"]:
             if str(label) in str(self.parsed_file["inputs"]):
                 self.wires[str(label)] = Wire(str(label), is_input=True)
@@ -32,8 +32,7 @@ class Circuit:
                 self.wires[str(label)] = Wire(str(label), is_output=True)
             else:
                 self.wires[str(label)] = Wire(str(label))
-        
-     
+
         # Create Gate objects and connect wires
         for gate_label, gate_inputs in self.parsed_file["gates"].items():
             gate_type = self.parsed_file["gate_types"][str(gate_label)][1]
@@ -44,14 +43,16 @@ class Circuit:
             else:
                 gate = Gate(gate_type)
 
-            self.inputs = [self.wires[(str(input_label))] for input_label in gate_inputs]
-            
+            self.inputs = [
+                self.wires[(str(input_label))] for input_label in gate_inputs
+            ]
+
             # Check if there are any fanouts
             for input_label in gate_inputs:
                 # print(input_label)
                 # print(gate_label)
-                if input_label.__contains__('-'):
-                    if (gate_label == input_label.split('-')[0]):
+                if input_label.__contains__("-"):
+                    if gate_label == input_label.split("-")[0]:
                         self.outputs.append(self.wires[input_label])
                     else:
                         self.outputs = [self.wires[gate_label]]
@@ -62,7 +63,6 @@ class Circuit:
         # for output in self.gates.keys():
         #     for wire in self.gates[output].outputs:
         #         print(wire.label, wire.value)
-
 
     def pass_expected(self, expectedInputVector, expectedOutputVector):
         if len(expectedInputVector) != self.input_count:
@@ -77,7 +77,7 @@ class Circuit:
         self.expectedOutput = expectedOutputVector
         print("Expected Input Vector: " + str(self.expectedInput))
         print("Expected Output Vector: " + str(self.expectedOutput))
-        
+
     def set_input_values(self, input_vector):
         if len(input_vector) != self.input_count:
             raise ValueError(
@@ -90,33 +90,41 @@ class Circuit:
             # print(wire_label)
             if self.parsed_file["fanout_count"][wire_label] > 0:
                 for i in range(1, self.parsed_file["fanout_count"][wire_label] + 1):
-                # Iterate through the fanouts and set their values
-                    fanout_wire = str(self.parsed_file["wires list"][self.parsed_file["wires list"].index(str(wire_label))+i])
+                    # Iterate through the fanouts and set their values
+                    fanout_wire = str(
+                        self.parsed_file["wires list"][
+                            self.parsed_file["wires list"].index(str(wire_label)) + i
+                        ]
+                    )
                     self.wires[fanout_wire].set_single_input(input_vector[index])
                     # print(f"Wire {fanout_wire} value: {self.wires[str(fanout_wire)].value}")
             # else:
-                # Set value for the wire label itself
+            # Set value for the wire label itself
             self.wires[str(wire_label)].set_single_input(input_vector[index])
-                # print(f"Wire {wire_label} value: {self.wires[str(wire_label)].value}")
-
+            # print(f"Wire {wire_label} value: {self.wires[str(wire_label)].value}")
 
     def simulate(self):
         for gate_label in self.parsed_file["gates"]:
-
             self.gates[gate_label].operate()
             for output in self.gates[gate_label].outputs:
                 if self.parsed_file["fanout_count"][int(output.label)] > 0:
-                    for i in range(1, self.parsed_file["fanout_count"][int(output.label)] + 1):
-                    # Iterate through the fanouts and set their values
-                        fanout_wire = str(self.parsed_file["wires list"][self.parsed_file["wires list"].index(str(output.label))+i])
+                    for i in range(
+                        1, self.parsed_file["fanout_count"][int(output.label)] + 1
+                    ):
+                        # Iterate through the fanouts and set their values
+                        fanout_wire = str(
+                            self.parsed_file["wires list"][
+                                self.parsed_file["wires list"].index(str(output.label))
+                                + i
+                            ]
+                        )
                         self.wires[fanout_wire].set_single_input(output.value)
                         # print(f"Wire {fanout_wire} value: {self.wires[str(fanout_wire)].value}")
                 # for output in self.gates[gate_label].outputs:
-                    # print('output label:')
-                    # print(output.label)
-                    # print('output value:')
-                    # print(output.value)
-
+                # print('output label:')
+                # print(output.label)
+                # print('output value:')
+                # print(output.value)
 
     def compute_output(self):
         output_vector = []

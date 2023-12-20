@@ -20,7 +20,7 @@ class FaultSimulator:
 
     def run_fault_simulation(self, fault_list):
         start_time = time.time()
-     
+
         # Generate input patterns
         input_patterns, patterns_str = self.generate_input_patterns()
 
@@ -62,7 +62,9 @@ class FaultSimulator:
                     if faulty_output != fault_free_outputs[pattern_str]:
                         fault_detected = True
                         print("fault is detected here")
-                        fault_sim_stats[pattern_str].append((fault, "stuck-at-"+str(stuck_at_fault),faulty_output))
+                        fault_sim_stats[pattern_str].append(
+                            (fault, "stuck-at-" + str(stuck_at_fault), faulty_output)
+                        )
                         break
 
                 if fault_detected:
@@ -70,7 +72,10 @@ class FaultSimulator:
                     print("number of faults detected so far: " + str(detected_faults))
                 else:
                     undetectable_faults += 1
-                    print("number of faults not detectable so far: " + str(undetectable_faults))
+                    print(
+                        "number of faults not detectable so far: "
+                        + str(undetectable_faults)
+                    )
 
             self.circuit.wires[fault].value = original_value
 

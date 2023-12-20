@@ -83,18 +83,17 @@ def parse_bench_file(file_path):
     for wire in wire_tracker.keys():
         if wire_tracker[wire] == 1:
             wire_tracker[wire] = 0
-    
+
     fanout_counter = wire_tracker.copy()
 
     for wire in wire_tracker.keys():
-            if wire_tracker[wire] == 0:
-                wire_list.append(str(wire))
-            else:
-                wire_list.append(str(wire))
-                for fan_out_count in range(wire_tracker[wire]):
-                    wire_list.append(str(wire)+"-"+str(fan_out_count+1))
-                   
-        
+        if wire_tracker[wire] == 0:
+            wire_list.append(str(wire))
+        else:
+            wire_list.append(str(wire))
+            for fan_out_count in range(wire_tracker[wire]):
+                wire_list.append(str(wire) + "-" + str(fan_out_count + 1))
+
     for key in gates.keys():
         for index, value in enumerate(gates[key]):
             if wire_tracker[value] > 0:
