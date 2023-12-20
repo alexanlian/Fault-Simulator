@@ -19,7 +19,6 @@ def parse_bench_file(file_path):
     gate_types = {}
     gate_counter = 1
 
-    gate_expressions = []
     # Iterate through each line in the file
     for line in file_content.split("\n"):
         line = line.strip()  # Remove leading and trailing whitespaces
@@ -84,18 +83,18 @@ def parse_bench_file(file_path):
     for wire in wire_tracker.keys():
         if wire_tracker[wire] == 1:
             wire_tracker[wire] = 0
-
-    print("Wire_tracker")
-    print(wire_tracker)
+    
+    fanout_counter = wire_tracker.copy()
 
     for wire in wire_tracker.keys():
-        if wire_tracker[wire] == 0:
-            wire_list.append(str(wire))
-        else:
-            wire_list.append(str(wire))
-            for fan_out_count in range(wire_tracker[wire]):
-                wire_list.append(str(wire) + "-" + str(fan_out_count + 1))
-
+            if wire_tracker[wire] == 0:
+                wire_list.append(str(wire))
+            else:
+                wire_list.append(str(wire))
+                for fan_out_count in range(wire_tracker[wire]):
+                    wire_list.append(str(wire)+"-"+str(fan_out_count+1))
+                   
+        
     for key in gates.keys():
         for index, value in enumerate(gates[key]):
             if wire_tracker[value] > 0:
@@ -121,6 +120,7 @@ def parse_bench_file(file_path):
         "circuit_name": circuit_name,
         "inputs_count": inputs_count,
         "outputs_count": outputs_count,
+        "fanout_count": fanout_counter,
         "inputs": inputs,
         "outputs": outputs,
         "inverters": inverters_count,
