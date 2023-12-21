@@ -137,46 +137,4 @@ class Circuit:
         self.set_input_values(input_vector)
         self.simulate()
         return self.compute_output()
-
-    # Method to prepare the graph representation of the circuit
-    def get_vertices(self):
-        # Extracting vertices and labels for graph representation
-        nodes = self.parsed_file["gates"].keys()  # Output wires
-        values = self.parsed_file["gates"].values()  # Input wires
-        gate_types = self.parsed_file["gate_types"].values()  # Gate types
-
-        vertices = []
-        vertices_labels = {}
-        counter = 0
-
-        for node, value, gate_type in zip(nodes, values, gate_types):
-            vertices.append([value[0], node])
-            left_in = tuple(vertices[counter])
-            vertices_labels[left_in] = (
-                str(self.parsed_file["gate_types"][node][0])
-                + "-"
-                + str(self.parsed_file["gate_types"][node][1])
-            )
-            counter += 1
-
-            if gate_type[1] not in ["NOT", "BUFFER"]:
-                vertices.append([value[1], node])
-                right_in = tuple(vertices[counter])
-                vertices_labels[right_in] = (
-                    str(self.parsed_file["gate_types"][node][0])
-                    + "-"
-                    + str(self.parsed_file["gate_types"][node][1])
-                )
-                counter += 1
-
-        return vertices_labels
-
-    # Method to assign colors to each node based on wire values (for visualization)
-    def get_colors(self):
-        colors = {
-            wire_label: "green"
-            if self.wires[wire_label].get_effective_value() == 1
-            else "red"
-            for wire_label in self.wires.keys()
-        }
-        return colors
+    

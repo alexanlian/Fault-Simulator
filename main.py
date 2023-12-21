@@ -1,6 +1,5 @@
 from classes.Circuit import Circuit
 from classes.FaultSimulation import FaultSimulator
-from classes.CircuitGraph import CircuitGraph
 
 # Create a circuit instance by parsing a benchmark file
 circuitExample = Circuit("bench-files\c17.bench.txt")
@@ -40,11 +39,9 @@ for wire in circuitExample.wires.keys():
 
 # Define a list of faults to simulate
 fault_list = ["3-2", "22"]
+
 # Create an instance of the FaultSimulator
 fault_sim = FaultSimulator(circuitExample)
 # Run the fault simulation and print the results
 fault_sim.run_fault_simulation(fault_list)
 
-# visualize the circuit using CircuitGraph
-# graph = CircuitGraph(circuitExample)
-# graph.draw_topological_graph()

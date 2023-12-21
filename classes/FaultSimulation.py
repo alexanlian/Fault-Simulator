@@ -1,7 +1,5 @@
 import time
 import math
-import csv
-
 
 class FaultSimulator:
     # Constructor for FaultSimulator class
@@ -81,6 +79,7 @@ class FaultSimulator:
 
         # Calculate Fault Coverage and Fault Efficiency
         fault_coverage = detected_faults / (2 * len(fault_list))
+
         fault_efficiency = (
             detected_faults / ((2 * len(fault_list)) - undetectable_faults)
             if undetectable_faults != len(fault_list)
