@@ -44,4 +44,3 @@ fault_list = ["3-2", "22"]
 fault_sim = FaultSimulator(circuitExample)
 # Run the fault simulation and print the results
 fault_sim.run_fault_simulation(fault_list)
-
