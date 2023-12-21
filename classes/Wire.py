@@ -32,3 +32,15 @@ class Wire:
         if self.fault is not None:
             return self.fault  # If there's a fault, return the fault value
         return self.value  # Otherwise, return the wire's actual value
+
+
+
+
+
+
+
+
+
+
+
+

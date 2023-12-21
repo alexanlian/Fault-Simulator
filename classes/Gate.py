@@ -22,25 +22,6 @@ class Gate:
             wire.connect(self)  # Connect each output wire to this gate
             self.outputs.append(wire)  # Add the output wire to the outputs list
 
-    # Method to display information about the gate
-    def get_info(self):
-        wires_in_labels = [
-            wire_in.label for wire_in in self.inputs
-        ]  # List of input wire labels
-        wires_out_labels = [
-            wire_out.label for wire_out in self.outputs
-        ]  # List of output wire labels
-        output = (
-            self.outputs[-1].value if self.outputs else 0
-        )  # Last output value or 0 if no outputs
-
-        # Print the gate information
-        print("\nGate info:\n----------")
-        print("Gate type:", self.gate_type)
-        print("Inputs:", wires_in_labels)
-        print("Outputs:", wires_out_labels)
-        print("output", output)
-
     # Method to perform the logic operation of the gate
     def operate(self):
         # Implementing logic for different gate types
