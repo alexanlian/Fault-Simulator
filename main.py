@@ -1,6 +1,5 @@
 from classes.Circuit import Circuit
 from classes.FaultSimulation import FaultSimulator
-from classes.CircuitGraph import CircuitGraph
 
 # Create a circuit instance by parsing a benchmark file
 circuitExample = Circuit("bench-files\c17.bench.txt")
