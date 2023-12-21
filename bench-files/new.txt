@@ -1,0 +1,13 @@
+# c1
+# 2 inputs
+# 1 outputs
+# 0 inverter
+# 2 gates ( 1 AND + 1 OR )
+
+INPUT(1)
+INPUT(2)
+
+OUTPUT(22)
+
+10 = AND(1, 2)
+22 = OR(10, 2)

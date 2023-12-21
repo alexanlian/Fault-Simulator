@@ -2,7 +2,8 @@ from classes.Circuit import Circuit
 from classes.FaultSimulation import FaultSimulator
 
 # Create a circuit instance by parsing a benchmark file
-circuitExample = Circuit("bench-files\c17.bench.txt")
+circuitExample = Circuit("bench-files/c17.txt")
+
 # Display information about the number of inputs and outputs in the circuit
 print(
     "This circuit has",
